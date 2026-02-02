@@ -1,0 +1,28 @@
+# --- 環境變數 (最重要，絕對不能上傳) ---
+.env
+
+# --- 依賴套件 (體積龐大，可透過 npm install 重建) ---
+node_modules/
+
+# --- 編譯產物 (自動生成的 JS 檔案) ---
+dist/
+build/
+*.tsbuildinfo
+
+# --- Docker 相關 ---
+.dockerignore
+# 如果你有使用本地的 db 檔案
+data/
+
+# --- 日誌檔案 ---
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# --- 作業系統與編輯器設定 ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
