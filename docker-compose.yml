@@ -4,6 +4,27 @@ services:
   discord-bot:
     build: .
     container_name: berry-fox-bot
-    restart: always
+    restart: unless-stopped
+    # 環境變數透過 Portainer 的 Stack > Environment variables 添加
+    # 或透過 .env 檔案
     env_file:
       - .env
+    networks:
+      - berryfox-network
+    # 本地測試時使用（可選）
+    # volumes:
+    #   - ./prisma/:/app/prisma/
+
+  redis:
+    image: redis:7-alpine
+    container_name: berry-fox-redis
+    restart: unless-stopped
+    networks:
+      - berryfox-network
+    # 本地測試時公開埠口
+    # ports:
+    #   - "6379:6379"
+
+networks:
+  berryfox-network:
+    driver: bridge

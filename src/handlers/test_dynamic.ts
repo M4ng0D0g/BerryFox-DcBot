@@ -1,0 +1,1 @@
+export default async function handle(args:any){ return { ok: true, args }; }

@@ -1,0 +1,80 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Guild {
+  id        String   @id @default(cuid())
+  name      String?
+  config    String?   // stored JSON as text for SQLite
+  createdAt DateTime @default(now())
+  users     User[]
+  convs     Conversation[]
+}
+
+model User {
+  id        String  @id @default(cuid())
+  username  String?
+  createdAt DateTime @default(now())
+  guildId   String?
+  guild     Guild?   @relation(fields: [guildId], references: [id])
+  convs     Conversation[]
+}
+
+model Conversation {
+  id        Int      @id @default(autoincrement())
+  guildId   String
+  guild     Guild    @relation(fields: [guildId], references: [id])
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  personaId Int?
+  persona   Persona? @relation(fields: [personaId], references: [id])
+  messages  Message[]
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id             Int      @id @default(autoincrement())
+  conversationId Int
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  role           String
+  content        String
+  createdAt      DateTime @default(now())
+}
+
+model Persona {
+  id           Int      @id @default(autoincrement())
+  name         String   @unique
+  systemPrompt String
+  config       String?  // stored JSON as text for SQLite
+  createdAt    DateTime @default(now())
+  convs        Conversation[]
+}
+
+model ApiEndpoint {
+  id          Int    @id @default(autoincrement())
+  name        String @unique
+  description String?
+  spec        String // stored JSON as text
+  createdAt   DateTime @default(now())
+}
+
+model ApiCallLog {
+  id         Int  @id @default(autoincrement())
+  endpointId Int
+  input      String // stored JSON as text
+  output     String // stored JSON as text
+  createdAt  DateTime @default(now())
+}
+
+model Embedding {
+  id        Int    @id @default(autoincrement())
+  vector    String // stored JSON array as text
+  refType   String
+  refId     Int
+  createdAt DateTime @default(now())
+}
