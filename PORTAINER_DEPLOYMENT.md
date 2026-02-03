@@ -18,50 +18,59 @@ docker run -d -p 8000:8000 -p 9443:9443 \
 
 ---
 
-## 方案一：透過 Git 和環境變數（推薦）
+## ✅ 推薦方案：Git + Portainer 環境變數（最安全）
 
 ### 步驟 1：推送程式碼到 Git（不含 .env）
 
 ```bash
-# 確保 .env 在 .gitignore 中
-echo ".env" >> .gitignore
+# 確保 .env 在 .gitignore 中（已配置）
+git status  # 檢查 .env 不在列表中
 
 # 推送到 GitHub/GitLab 等
 git add .
-git commit -m "Deploy to Portainer"
+git commit -m "Prepare for Portainer deployment"
 git push origin main
 ```
 
 ### 步驟 2：在 Portainer 中建立 Stack
 
-1. **進入 Portainer → Environments → Select Your Environment**
+1. **進入 Portainer → 選擇你的環境**
 2. **左側選單 → Stacks → Add Stack**
 3. **選擇 "Git Repository"**
    - Repository URL: `https://github.com/你的用戶名/BerryFox.git`
    - Compose path: `docker-compose.yml`
-   - Git credentials: 如果是私有倉庫，輸入帳密
+   - Git credentials: 如果是公開倉庫，留空
 
-### 步驟 3：設定環境變數
+### 步驟 3：設定環境變數（最重要！）
 
-在 Stack 編輯頁面，找到 **"Environment variables"** 區段，添加：
+⚠️ **這步非常重要：在 Portainer Stack 編輯頁面下拉找到 "Environment variables" 分段**
 
-```
-TOKEN=你的Discord_Token
-GOOGLE_GEMINI_API_KEY=你的Gemini_API金鑰
-LLM_PROVIDER=gemini
-DATABASE_URL=file:./prisma/dev.db
-REDIS_URL=redis://redis:6379
-```
+點擊 **"Add Variable"** 逐個添加：
 
-**關鍵：** 
-- 不要將敏感資訊放在 docker-compose.yml
-- 敏感資訊只在 Portainer 的環境變數中設定
+| 變數名 | 值 |
+|--------|-----|
+| `TOKEN` | 你的 Discord Bot Token |
+| `GOOGLE_GEMINI_API_KEY` | 你的 Google Gemini API Key |
+| `LLM_PROVIDER` | `gemini` |
+| `DATABASE_URL` | `file:./prisma/dev.db` |
+| `REDIS_URL` | `redis://redis:6379` |
+
+**重要提示：**
+- ✅ 所有敏感資訊（Token、API Key）只在 Portainer 環境變數中設定
+- ❌ 不要在 docker-compose.yml 或 Dockerfile 中寫入敏感資訊
+- ❌ 不要將 .env 上傳到 Git
 
 ### 步驟 4：部署
 
 1. 點擊 **"Deploy Stack"**
-2. 等待容器啟動（通常 2-5 分鐘）
-3. 進入 **Containers** 查看日誌確認成功
+2. 等待 2-5 分鐘容器啟動
+3. 進入 **Containers** → `berry-fox-bot` → **Logs** 查看日誌
+
+**預期日誌：**
+```
+✅ 機器人已上線！登入帳號為 莓狐#8931
+✅ Handlers loaded: [ 'getUser', 'test_dynamic' ]
+```
 
 ---
 

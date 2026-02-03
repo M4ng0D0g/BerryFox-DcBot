@@ -5,10 +5,8 @@ services:
     build: .
     container_name: berry-fox-bot
     restart: unless-stopped
-    # 環境變數透過 Portainer 的 Stack > Environment variables 添加
-    # 或透過 .env 檔案
-    env_file:
-      - .env
+    # 環境變數在 Portainer UI 中設定（推薦方式）
+    # Portainer → Stacks → Edit → Environment variables
     networks:
       - berryfox-network
     # 本地測試時使用（可選）

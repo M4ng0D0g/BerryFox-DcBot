@@ -34,7 +34,9 @@ git push origin main
 
 ### 3️⃣ 設定環境變數
 
-在 Portainer Stack 編輯頁面，找 **"Environment variables"** 分段：
+**⚠️ 重要！在 Portainer Stack 編輯頁面中設定**
+
+在 Portainer UI 中找到 **"Environment variables"** 區段，點擊 **"Add Variable"** 逐個添加：
 
 ```
 TOKEN=你的_Discord_Bot_Token
@@ -43,6 +45,11 @@ LLM_PROVIDER=gemini
 DATABASE_URL=file:./prisma/dev.db
 REDIS_URL=redis://redis:6379
 ```
+
+**✅ 正確做法：**
+- 所有敏感資訊（Token、API Key）只在 Portainer 環境變數中設定
+- docker-compose.yml 和 Dockerfile 中不包含敏感資訊
+- .env 檔案不上傳到 Git
 
 ### 4️⃣ 部署
 

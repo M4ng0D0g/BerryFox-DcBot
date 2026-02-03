@@ -82,7 +82,9 @@
 
 ### 設定環境變數
 
-- [ ] **在 Stack 編輯頁面添加環境變數**
+- [ ] **在 Portainer Stack UI 添加環境變數**
+  - [ ] 找到 Stack 編輯頁面的 "Environment variables" 分段
+  - [ ] 點擊 **"Add Variable"** 逐個添加以下變數：
 
 | 變數名 | 值 | 說明 |
 |--------|-----|------|
@@ -92,10 +94,10 @@
 | `DATABASE_URL` | `file:./prisma/dev.db` | 資料庫路徑 |
 | `REDIS_URL` | `redis://redis:6379` | Redis 服務（需要 Redis 容器） |
 
-- [ ] **驗證環境變數正確**
+- [ ] **驗證環境變數設定正確**
   - [ ] 無多餘空格
   - [ ] API Key 完整（無截斷）
-  - [ ] 沒有引號
+  - [ ] 沒有引號（單引號或雙引號）
 
 ### 部署
 

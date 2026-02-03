@@ -15,8 +15,7 @@ COPY package*.json ./
 # 安裝必要的套件（包含 devDeps，確保 build 時能執行 tsc）
 RUN npm install
 
-# 複製其餘程式碼和環境變數
-COPY .env* ./
+# 複製其餘程式碼（不複製 .env，敏感資訊透過環境變數在執行時注入）
 COPY . .
 
 # 生成 Prisma client（確保 @prisma/client 在容器內可正常使用）
