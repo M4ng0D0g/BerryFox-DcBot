@@ -12,20 +12,24 @@ RUN apt-get update -y && \
 # 先複製 package 檔案以利用快取優化 (提升之後構建的速度)
 COPY package*.json ./
 
-# 安裝必要的套件（包含 devDeps，確保 build 時能執行 tsc）
-RUN npm install
+# 安裝必要的套件（不包含 devDeps）
+RUN npm ci --only=production && \
+    npm cache clean --force
 
-# 複製必要的程式碼檔案（不複製 .env）
+# 複製編譯好的源代碼（假設在本地已編譯）
+# 或在此複製 src 和編譯
 COPY tsconfig.json ./
-COPY prisma ./prisma/
 COPY src ./src/
+COPY prisma ./prisma/
 COPY scripts ./scripts/
 
 # 編譯 TypeScript 為 JavaScript
-RUN npm run build
+RUN npm install -g typescript && \
+    tsc && \
+    npm uninstall -g typescript
 
 # 生成 Prisma client（在運行時使用）
 RUN npx prisma generate || true
 
 # 啟動機器人
-CMD ["npm", "start"]
+CMD ["node", "dist/src/index.js"]
