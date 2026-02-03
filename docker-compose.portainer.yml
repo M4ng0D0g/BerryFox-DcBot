@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  discord-bot:
+    image: berryfox:latest
+    container_name: berry-fox-bot
+    restart: unless-stopped
+    environment:
+      - TOKEN=${TOKEN}
+      - GOOGLE_GEMINI_API_KEY=${GOOGLE_GEMINI_API_KEY}
+      - LLM_PROVIDER=${LLM_PROVIDER}
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+    depends_on:
+      - redis
+    networks:
+      - berryfox-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: berry-fox-redis
+    restart: unless-stopped
+    networks:
+      - berryfox-network
+
+networks:
+  berryfox-network:
+    driver: bridge

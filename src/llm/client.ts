@@ -46,15 +46,37 @@ export async function chatCompletion(payload: any) {
           category: HarmCategory.HARM_CATEGORY_HARASSMENT,
           threshold: HarmBlockThreshold.BLOCK_NONE,
         },
+        {
+          category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+          threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
+        {
+          category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+          threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
+        {
+          category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+          threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
       ],
     });
     
-    const history = chatMessages
+    // Build history (exclude last message)
+    let history = chatMessages
       .slice(0, -1)
       .map((m: any) => ({
         role: m.role === 'assistant' ? 'model' : 'user',
         parts: [{ text: m.content }],
       }));
+    
+    // Gemini requires first message in history to be 'user'
+    // If history starts with 'model', prepend a dummy user message
+    if (history.length > 0 && history[0].role === 'model') {
+      history = [
+        { role: 'user', parts: [{ text: '...' }] },
+        ...history
+      ];
+    }
     
     const lastMsg = chatMessages[chatMessages.length - 1];
     const userContent = lastMsg?.content || 'Continue conversation';
