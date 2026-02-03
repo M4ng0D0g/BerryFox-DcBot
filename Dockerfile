@@ -15,21 +15,17 @@ COPY package*.json ./
 # 安裝必要的套件（包含 devDeps，確保 build 時能執行 tsc）
 RUN npm install
 
-# 複製其餘程式碼（不複製 .env，敏感資訊透過環境變數在執行時注入）
-COPY . .
+# 複製必要的程式碼檔案（不複製 .env）
+COPY tsconfig.json ./
+COPY prisma ./prisma/
+COPY src ./src/
+COPY scripts ./scripts/
 
-# 生成 Prisma client（確保 @prisma/client 在容器內可正常使用）
-# 這會在 node_modules/.prisma 下建立需要的檔案
-RUN npx prisma generate || npm run prisma:generate || true
-
-# 套用 migrations（非互動式）並嘗試執行 dev migration 作為備援
-RUN npx prisma migrate deploy || npm run prisma:migrate || true
-
-# (開發用) 啟動 seed，失敗也不會導致 build 掛掉
-RUN npm run db:seed || true
-
-# 將 TS 編譯為 JS (如果你的啟動指令是跑 JS 的話，這步很重要)
+# 編譯 TypeScript 為 JavaScript
 RUN npm run build
+
+# 生成 Prisma client（在運行時使用）
+RUN npx prisma generate || true
 
 # 啟動機器人
 CMD ["npm", "start"]
